@@ -8,3 +8,4 @@ class CodeRequest(BaseModel):
 class CodeResponse(BaseModel):
     status: str
     output: str
+    execution_time: float

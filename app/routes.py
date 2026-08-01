@@ -12,5 +12,6 @@ def execute_code(request: CodeRequest):
 
     return CodeResponse(
         status=result["status"],
-        output=result["output"]
+        output=result["output"],
+        execution_time=result["execution_time"]
     )
