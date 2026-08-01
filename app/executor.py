@@ -14,4 +14,17 @@ def execute_python_code(code: str):
     with open(file_path, "w") as file:
         file.write(code)
 
-    return "Python file created successfully."
+    output = client.containers.run(
+    image="python:3.11",
+    command="python sample.py",
+    volumes={
+        os.path.abspath("temp"): {
+            "bind": "/app",
+            "mode": "rw"
+        }
+    },
+    working_dir="/app",
+    remove=True
+    )
+
+    return output.decode("utf-8")
