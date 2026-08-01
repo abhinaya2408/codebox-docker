@@ -8,8 +8,9 @@ router = APIRouter()
 @router.post("/execute", response_model=CodeResponse)
 def execute_code(request: CodeRequest):
 
-    output = execute_python_code(request.code)
+    result = execute_python_code(request.code)
 
     return CodeResponse(
-        output=output
+        status=result["status"],
+        output=result["output"]
     )

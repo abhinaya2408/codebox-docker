@@ -6,4 +6,5 @@ class CodeRequest(BaseModel):
 
 
 class CodeResponse(BaseModel):
+    status: str
     output: str
