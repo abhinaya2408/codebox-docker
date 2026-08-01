@@ -1,68 +1,20 @@
-import os
-import uuid
-import time
-import docker
-from docker.errors import ContainerError
-
-# Connect to Docker Engine
-client = docker.from_env()
+from .executors.python_executor import execute_python
+from .executors.java_executor import execute_java
 
 
-def execute_python_code(code: str):
+def execute(language: str, code: str):
 
-    # Create temp directory
-    os.makedirs("temp", exist_ok=True)
+    language = language.lower()
 
-    # Generate unique filename
-    filename = f"{uuid.uuid4()}.py"
+    if language == "python":
+        return execute_python(code)
 
-    file_path = os.path.join("temp", filename)
+    elif language == "java":
+        return execute_java(code)
 
-    # Start timer
-    start_time = time.time()
-
-    try:
-
-        # Save code into temporary file
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(code)
-
-        # Execute inside Docker
-        output = client.containers.run(
-            image="python:3.11",
-            command=f"python {filename}",
-            volumes={
-                os.path.abspath("temp"): {
-                    "bind": "/app",
-                    "mode": "rw"
-                }
-            },
-            working_dir="/app",
-            remove=True
-        )
-
-        # End timer
-        end_time = time.time()
-
-        return {
-            "status": "success",
-            "output": output.decode("utf-8"),
-            "execution_time": round(end_time - start_time, 3)
-        }
-
-    except ContainerError as e:
-
-        # End timer
-        end_time = time.time()
-
+    else:
         return {
             "status": "error",
-            "output": e.stderr.decode("utf-8"),
-            "execution_time": round(end_time - start_time, 3)
+            "output": f"Unsupported language: {language}",
+            "execution_time": 0.0
         }
-
-    finally:
-
-        # Delete temporary file
-        if os.path.exists(file_path):
-            os.remove(file_path)

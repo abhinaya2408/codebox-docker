@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from .schemas import CodeRequest, CodeResponse
-from .executor import execute_python_code
+from .executor import execute
 
 router = APIRouter()
 
@@ -8,7 +8,10 @@ router = APIRouter()
 @router.post("/execute", response_model=CodeResponse)
 def execute_code(request: CodeRequest):
 
-    result = execute_python_code(request.code)
+    result = execute(
+        request.language,
+        request.code
+    )
 
     return CodeResponse(
         status=result["status"],
